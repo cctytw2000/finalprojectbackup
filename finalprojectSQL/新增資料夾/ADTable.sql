@@ -1,0 +1,30 @@
+USE [finalproject]
+GO
+
+/****** Object:  Table [dbo].[AD]    Script Date: 2019/10/16 ¤U¤È 07:00:38 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[AD](
+	[ADID] [nchar](10) NOT NULL,
+	[ADName] [nchar](10) NULL,
+	[Picture] [nchar](10) NULL,
+	[GameTypeID] [int] NULL,
+ CONSTRAINT [PK_AD] PRIMARY KEY CLUSTERED 
+(
+	[ADID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[AD]  WITH CHECK ADD  CONSTRAINT [FK_AD_GameType] FOREIGN KEY([GameTypeID])
+REFERENCES [dbo].[GameType] ([GameTypeID])
+GO
+
+ALTER TABLE [dbo].[AD] CHECK CONSTRAINT [FK_AD_GameType]
+GO
+
+
