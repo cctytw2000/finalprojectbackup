@@ -146,8 +146,9 @@ public class MemberDaoJdbcImpl implements IMemberDao {
 		}
 
 	}
+
 	@Override
-	public Boolean changePwd(Member m,String newpassword) {
+	public Boolean changePwd(Member m, String newpassword) {
 
 		Query query = sessionFactory.getCurrentSession()
 				.createQuery("from Member where account =?1  and token = ?2 and type= ?3 and password = ?4");
@@ -166,6 +167,7 @@ public class MemberDaoJdbcImpl implements IMemberDao {
 		}
 
 	}
+
 	@Override
 	public boolean checkAccount(Member m) {
 		System.out.println("----查詢帳號是否重複------");
@@ -186,6 +188,26 @@ public class MemberDaoJdbcImpl implements IMemberDao {
 			return true;
 		}
 
+	}
+
+	@Override
+	public Member checkAccount(String account) {
+
+		Query query = sessionFactory.getCurrentSession().createQuery("from Member where account =?1");
+		query.setParameter(1, account);
+
+
+		try {
+			Member mem = (Member) query.getSingleResult();
+
+			return mem;
+		} catch (NoResultException e) {
+
+			return null;
+		}
+
+
+	
 	}
 
 }

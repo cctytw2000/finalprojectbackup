@@ -55,7 +55,7 @@ public class LoginMember extends HttpServlet {
 				"");
 
 		WebApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
-		Member mem = context.getBean(Member.class);
+		Member memBean = context.getBean(Member.class);
 		LiLoInfo liloinfo = context.getBean(LiLoInfo.class);
 		IMemberDao MemDao = (IMemberDao) context.getBean("memberDaoJdbcImpl");
 		ILiLoInforDao LiLoDao = (ILiLoInforDao) context.getBean("liLoInforDaoJdbcImpl");
@@ -63,18 +63,19 @@ public class LoginMember extends HttpServlet {
 		
 		
 		
-		mem.setAccount(account);
-		mem.setPassword(password_AES);
-		mem.setType(type);
+		memBean.setAccount(account);
+		memBean.setPassword(password_AES);
+		memBean.setType(type);
 
-		Member member = MemDao.login(mem);
-
+		Member member = MemDao.login(memBean);
+		String logintime = (String) context.getBean("time");
 		if (member != null) {
-			String logintime = (String) context.getBean("time");
+			System.out.println("member != null");
 			session.setAttribute("username", member.getUsername());
 			session.setAttribute("token", member.getToken());
 			session.setAttribute("account", member.getAccount());
 			session.setAttribute("member_id", member.getMember_id());
+			session.setAttribute("mem",member );
 			session.setAttribute("type", type);
 			
 			liloinfo.setMember(member);
@@ -82,7 +83,7 @@ public class LoginMember extends HttpServlet {
 			liloinfo.setType("Login");
 			liloinfo.setClientIP(request.getRemoteAddr());
 			liloinfo.setAccountType("General");
-			
+			liloinfo.setIsSuccess(1);
 			
 			response.getWriter().write("<script>alert('歡迎光臨');</script>");
 			System.out.println("login IP :"+request.getRemoteAddr());
@@ -91,7 +92,21 @@ public class LoginMember extends HttpServlet {
 			RequestDispatcher rd = request.getRequestDispatcher("member/jump.jsp");
 			rd.forward(request, response);
 		} else {
-
+			System.out.println("member == null");
+			Member mem =MemDao.checkAccount(memBean.getAccount());
+			if(mem != null) {
+				System.out.println("mem != null");
+				liloinfo.setMember(mem);
+				liloinfo.setLoginTime(logintime);
+				liloinfo.setType("Login");
+				liloinfo.setClientIP(request.getRemoteAddr());
+				liloinfo.setAccountType("General");
+				liloinfo.setIsSuccess(0);
+				LiLoDao.add(liloinfo);
+			}else {
+				
+			}
+	
 			response.getWriter().write("<script>alert('帳號或密碼錯誤，或者未開通');history.go(-1);</script>");
 		}
 

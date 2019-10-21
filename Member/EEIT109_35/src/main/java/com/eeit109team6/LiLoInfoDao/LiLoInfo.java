@@ -27,6 +27,7 @@ public class LiLoInfo {
 	private Member member;
 	private String loginTime ;
 	private String accountType;
+	private Integer isSuccess;
 	
 
 	@Id
@@ -85,6 +86,14 @@ public class LiLoInfo {
 
 	public void setAccountType(String accountType) {
 		this.accountType = accountType;
+	}
+
+	public Integer getIsSuccess() {
+		return isSuccess;
+	}
+
+	public void setIsSuccess(Integer isSuccess) {
+		this.isSuccess = isSuccess;
 	}
 
 }

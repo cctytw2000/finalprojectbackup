@@ -25,5 +25,7 @@ public interface IMemberDao {
 	public Boolean changePwd(Member m, String oldpassword);
 
 	public boolean checkAccount(Member m);
+	
+	public Member checkAccount(String account);
 
 }

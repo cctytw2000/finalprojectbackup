@@ -9,6 +9,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import com.eeit109team6.LiLoInfoDao.ILiLoInforDao;
+import com.eeit109team6.LiLoInfoDao.LiLoInfo;
+import com.eeit109team6.memberDao.Member;
+
 /**
  * Servlet implementation class LogOutMember
  */
@@ -21,9 +28,25 @@ public class LogOutMember extends HttpServlet {
 
 		request.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html;charset=UTF-8");
-		HttpSession session = request.getSession(false);
+		WebApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
+		LiLoInfo liloinfo = context.getBean(LiLoInfo.class);
+		ILiLoInforDao LiLoDao = (ILiLoInforDao) context.getBean("liLoInforDaoJdbcImpl");
 
-		if (session != null) {
+		HttpSession session = request.getSession(false);
+		Member mem = (Member) session.getAttribute("mem");
+
+		String logouttime = (String) context.getBean("time");
+		if (mem != null) {
+
+			liloinfo.setMember(mem);
+			liloinfo.setLoginTime(logouttime);
+			liloinfo.setType("logout");
+			liloinfo.setClientIP(request.getRemoteAddr());
+			liloinfo.setAccountType("General");
+			liloinfo.setIsSuccess(1);
+
+			LiLoDao.add(liloinfo);
+
 			System.out.println("會員登出");
 			session.invalidate();
 			response.getWriter().write("<script>alert('已登出');</script>");
